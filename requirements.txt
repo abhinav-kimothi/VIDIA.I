@@ -1,0 +1,8 @@
+streamlit
+openai
+pdfplumber
+streamlit-chat
+configparser
+pathlib
+requests
+bs4
