@@ -313,7 +313,7 @@ def first_column():
             st.markdown("<p style='color:#5A5A5A;'>🖖 Presently, Documents(.pdf and .txt) and web ulrs(single page) are enabled. Websites, Videos and Audios are next in pipeline.</p>", unsafe_allow_html=True)
             st.write(" ")        
             st.write(" ")        
-            st.markdown("<span style='color:#5A5A5A;'>🖖 I am under regular development. You can also view my source code and contribute [here](https://github.com/).</span>", unsafe_allow_html=True)
+            st.markdown("<span style='color:#5A5A5A;'>🖖 I am under regular development. You can also view my source code and contribute [here](https://github.com/abhinav-kimothi/VIDIA.I/tree/main).</span>", unsafe_allow_html=True)
 
 def second_column():
             st.markdown("<p style='text-align:center; color:blue;'><u><b>How to Use</u><a href='https://youtu.be/UuTmUxBzE_w'>[Watch Demo🎥]</a></b></p>",unsafe_allow_html=True)

@@ -2,7 +2,7 @@
 
 ---
 
-VIDIA is an experimental AI-powered QnA agent designed to simplify document analysis. VIDIA can extract valuable insights from documents and web links. Powered by OpenAI's language models and built on Streamlit, VIDIA is an effort to make information extraction effortless.
+[__VIDIA__](https://abhinav-kimothi-vidia-i-srcmain-w0iybq.streamlit.app/) is an experimental AI-powered QnA agent designed to simplify document analysis. VIDIA can extract valuable insights from documents and web links. Powered by OpenAI's language models and built on Streamlit, VIDIA is an effort to make information extraction effortless.
 
 ---
 
@@ -24,7 +24,7 @@ A [__YouTube video__](https://youtu.be/UuTmUxBzE_w) 👈 of the demo can be acce
 
 ## Run on streamlit
 
-VIDIA is live on [__Streamlit__](https://streamlit.io/) 👈 
+VIDIA is live on [__Streamlit__](https://abhinav-kimothi-vidia-i-srcmain-w0iybq.streamlit.app/) 👈 
 
 __Prerequisites__: Before running the application, ensure that you have the [__OpenAI API key__](https://platform.openai.com/account/api-keys) 🗝
 
@@ -74,9 +74,24 @@ streamlit run src/main.py
 
 ---
 
+## Roadmap Ahead
+
+While VIDIA remains a modest side project, I harbor grand ambitions for its future development. 
+
+- I am actively working towards expanding its capabilities to handle video and audio transcripts, spreadsheets, and even complete websites. 
+
+- I aim to enhance VIDIA with advanced features, such as analyzing spreadsheets with charts, handling multiple inputs, and addressing larger documents using embeddings. 
+
+- I am committed to utilizing models and embeddings that are freely accessible to all developers, ensuring inclusivity.
+
+
+---
+
 ## Feedback and Collabortation
 
-Thank you for your time viewing this repo and trying out VIDIA
+Thank you for your time reading and viewing this repo.
+
+As a fellow developer, I hold your feedback in the highest regard. I invite you to try out VIDIA, explore its features, and share your thoughts, suggestions, and any issues you may encounter. Your input is of immeasurable value and will guide me in shaping VIDIA's future, making it an even more valuable tool for all.
 
 I'll be obliged if you tell me about any __issues__, __feature enhancements__, __new feature ideas__ or any other __feedback__. 
 
