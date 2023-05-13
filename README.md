@@ -2,7 +2,7 @@
 
 ---
 
-An OpenAI GPT3 based QnA agent for documents and links
+VIDIA is an experimental AI-powered QnA agent designed to simplify document analysis. VIDIA can extract valuable insights from documents and web links. Powered by OpenAI's language models and built on Streamlit, VIDIA is an effort to make information extraction effortless.
 
 ---
 
@@ -18,7 +18,7 @@ __User-Friendly Interface__: The application interface is built using Streamlit,
 ---
 ## Demo Video
 
-A [__YouTube video__](https://www.youtube.com/watch?v=j0RYLdroQ3w) 👈 of the demo can be accessed here 
+A [__YouTube video__](https://youtu.be/UuTmUxBzE_w) 👈 of the demo can be accessed here 
 
 ---
 

@@ -316,7 +316,7 @@ def first_column():
             st.markdown("<span style='color:#5A5A5A;'>🖖 I am under regular development. You can also view my source code and contribute [here](https://github.com/).</span>", unsafe_allow_html=True)
 
 def second_column():
-            st.markdown("<p style='text-align:center; color:blue;'><u><b>How to Use</u></b></p>",unsafe_allow_html=True)
+            st.markdown("<p style='text-align:center; color:blue;'><u><b>How to Use</u><a href='https://youtu.be/UuTmUxBzE_w'>[Watch Demo🎥]</a></b></p>",unsafe_allow_html=True)
             st.markdown("<span style='color:#5A5A5A;'>👉🏽 Firstly, you need to enter your OpenAI api key🔧 in the input box on the sidebar. You can get it [here](https://platform.openai.com/account/api-keyshttps://platform.openai.com/account/api-keys)</span>",unsafe_allow_html=True)
             with st.expander("Why do I need an API key?"):
                 st.markdown("<span style='color:#5A5A5A;'>🌟 VIDIA uses OpenAI's GPT APIs. A [cost is incurred for every API call](https://openai.com/pricing)💰. OpenAI offers free credits when you sign up. So you can try out VIDIA without incurring any cost. If you'd like to fund this app to take away this requirement 😬 Please drop a note [here](mailto:abhinav.kimothi.ds@gmail.com)</span>",unsafe_allow_html=True)
