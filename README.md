@@ -90,7 +90,6 @@ You can collaborate on this project with me by __opening an issue__, __submittin
 [![GitHub followers](https://img.shields.io/github/followers/abhinav-kimothi?label=Follow&style=social)](https://github.com/abhinav-kimothi)
 [![LIn](https://img.shields.io/badge/LinkedIn-blue)](https://www.linkedin.com/in/abhinav-kimothi/)
 [![Mail](https://img.shields.io/badge/eMail-green)](mailto:abhinav.kimothi.ds@gmail.com)
-
 [![PH](https://img.shields.io/badge/Product%20Hunt-orange)](https://www.producthunt.com/@abhinav_kimothi)
 
 ---
