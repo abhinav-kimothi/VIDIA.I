@@ -21,9 +21,6 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 
 
-OpenAI.openai_api_key="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"
-
-
 def extract_YT(link):
     address=link
     loader = YoutubeLoader.from_youtube_url(address, add_video_info=True)
