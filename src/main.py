@@ -48,6 +48,8 @@ if uploaded is not None and uploaded !="":
         words,pages, string_data=extract_data(uploaded)
     elif input_choice == "Weblink":
         words,pages,string_data=extract_page(uploaded)
+    elif input_choice =="YouTube":
+        words,pages,string_data=extract_YT(uploaded)
 
     #### Count number of words and pages read ####
     col1, col2, col3=st.sidebar.columns(3)

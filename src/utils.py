@@ -7,6 +7,44 @@ import requests
 from bs4 import BeautifulSoup
 from configparser import ConfigParser
 import os
+
+from langchain.document_loaders import YoutubeLoader
+from langchain.document_loaders import TextLoader
+
+
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.chains import RetrievalQA
+from langchain.llms import OpenAI
+
+from langchain.indexes import VectorstoreIndexCreator
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+
+
+OpenAI.openai_api_key="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"
+
+
+def extract_YT(link):
+    address=link
+    loader = YoutubeLoader.from_youtube_url(address, add_video_info=True)
+    return loader.load()
+
+def query_response(documents):
+
+    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=5)
+    texts = text_splitter.split_documents(documents)
+
+    embeddings = OpenAIEmbeddings()
+    db = FAISS.from_documents(texts, embeddings)
+
+    retriever = db.as_retriever()
+    qa = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key="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"), chain_type="stuff", retriever=retriever)
+
+    resp=qa.run("what is this video about? Answer in detail and in an enthusiastic tone. End with a follow up question.")
+
+
+import pandas as pd
+import tiktoken
 ###
 config_object = ConfigParser()
 config_object.read("./vidia-config.ini")
@@ -89,6 +127,14 @@ def extract_page(link):
     words=len(website_text.split())
     num=1
     return words, num, website_text
+
+def extract_YT(link):
+    address=link
+    loader = YoutubeLoader.from_youtube_url(address, add_video_info=True)
+    text=str(loader.load()[0])
+    words=len(text.split())
+    num=1
+    return words, num, text
 
 #### Clear data upon new input
 
@@ -284,7 +330,7 @@ Layout, Information and Selection Functions
 
 def input_selector():
 
-        input_choice=st.sidebar.radio("#### :blue[Choose the Input Method]",('Document','Weblink','YouTube (Coming Soon)','Audio (Coming Soon)'))
+        input_choice=st.sidebar.radio("#### :blue[Choose the Input Method]",('Document','Weblink','YouTube','Audio (Coming Soon)'))
 
         if input_choice=="Document":
             with st.sidebar.expander("📁 __Documents__"):
@@ -292,9 +338,9 @@ def input_selector():
         elif input_choice=="Weblink":
             with st.sidebar.expander("🌐 __Webpage__"):
                 uploaded=st.text_input('Enter a weblink',on_change=clear)
-        elif input_choice=="YouTube (Coming Soon)":
-            with st.sidebar.expander("🎥 __YouTube__ (Coming Soon)"):
-                uploaded=st.text_input('Enter a YT link',on_change=clear,disabled=True)
+        elif input_choice=="YouTube":
+            with st.sidebar.expander("🎥 __YouTube__"):
+                uploaded=st.text_input('Enter a YT link',on_change=clear)
         elif input_choice=="Audio (Coming Soon)":
             with st.sidebar.expander("🎙 __Audio__ (Coming Soon)"):
                 uploaded=st.text_input('Enter an Audio link',on_change=clear,disabled=True)
@@ -386,4 +432,7 @@ def write_history_to_a_file():
         hst+="\n"+str(item)
     
     return hst
+
+
+
 
