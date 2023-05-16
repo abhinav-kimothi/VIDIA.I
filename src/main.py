@@ -5,25 +5,6 @@ import openai
 
 from utils import *
 
-from streamlit_chat import message
-import pathlib
-import pdfplumber
-import requests
-from bs4 import BeautifulSoup
-from configparser import ConfigParser
-import os
-
-from langchain.document_loaders import YoutubeLoader
-from langchain.document_loaders import TextLoader
-
-
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.chains import RetrievalQA
-from langchain.llms import OpenAI
-
-from langchain.indexes import VectorstoreIndexCreator
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
 
 
 #### Create config object and read the config file ####
