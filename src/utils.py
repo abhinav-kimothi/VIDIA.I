@@ -7,7 +7,8 @@ import requests
 from bs4 import BeautifulSoup
 from configparser import ConfigParser
 import os
-
+import langchain
+'''
 from langchain.document_loaders import YoutubeLoader
 from langchain.document_loaders import TextLoader
 
@@ -20,7 +21,8 @@ from langchain.indexes import VectorstoreIndexCreator
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 
-
+'''
+'''
 def extract_YT(link):
     address=link
     loader = YoutubeLoader.from_youtube_url(address, add_video_info=True)
@@ -38,7 +40,7 @@ def query_response(documents):
     qa = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key="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"), chain_type="stuff", retriever=retriever)
 
     resp=qa.run("what is this video about? Answer in detail and in an enthusiastic tone. End with a follow up question.")
-
+'''
 
 import pandas as pd
 import tiktoken
@@ -125,6 +127,7 @@ def extract_page(link):
     num=1
     return words, num, website_text
 
+'''
 def extract_YT(link):
     address=link
     loader = YoutubeLoader.from_youtube_url(address, add_video_info=True)
@@ -132,7 +135,7 @@ def extract_YT(link):
     words=len(text.split())
     num=1
     return words, num, text
-
+'''
 #### Clear data upon new input
 
 
