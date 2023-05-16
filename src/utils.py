@@ -133,9 +133,7 @@ def extract_YT(link):
     text=str(loader.load()[0])
     words=len(text.split())
     num=1
-    st.write(text)
-    st.write(words)
-    st.write(num)
+
     return words, num, text
 
 #### Clear data upon new input
