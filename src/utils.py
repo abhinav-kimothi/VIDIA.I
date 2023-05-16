@@ -43,7 +43,7 @@ def query_response(documents):
 '''
 
 import pandas as pd
-import tiktoken
+#import tiktoken
 ###
 config_object = ConfigParser()
 config_object.read("./vidia-config.ini")
