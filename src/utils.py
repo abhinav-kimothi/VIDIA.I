@@ -9,37 +9,36 @@ from configparser import ConfigParser
 import os
 #import langchain
 '''
-from langchain.document_loaders import YoutubeLoader
-from langchain.document_loaders import TextLoader
+#from langchain.document_loaders import YoutubeLoader
+#from langchain.document_loaders import TextLoader
 
 
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.chains import RetrievalQA
-from langchain.llms import OpenAI
+#from langchain.text_splitter import CharacterTextSplitter
+#from langchain.chains import RetrievalQA
+#from langchain.llms import OpenAI
 
-from langchain.indexes import VectorstoreIndexCreator
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
+#from langchain.indexes import VectorstoreIndexCreator
+#from langchain.embeddings import OpenAIEmbeddings
+#from langchain.vectorstores import FAISS
 
-'''
-'''
-def extract_YT(link):
-    address=link
-    loader = YoutubeLoader.from_youtube_url(address, add_video_info=True)
-    return loader.load()
 
-def query_response(documents):
+#def extract_YT(link):
+#    address=link
+#    loader = YoutubeLoader.from_youtube_url(address, add_video_info=True)
+#    return loader.load()
 
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=5)
-    texts = text_splitter.split_documents(documents)
+#def query_response(documents):
 
-    embeddings = OpenAIEmbeddings()
-    db = FAISS.from_documents(texts, embeddings)
+#    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=5)
+#    texts = text_splitter.split_documents(documents)
 
-    retriever = db.as_retriever()
-    qa = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key="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"), chain_type="stuff", retriever=retriever)
+#    embeddings = OpenAIEmbeddings()
+#    db = FAISS.from_documents(texts, embeddings)
 
-    resp=qa.run("what is this video about? Answer in detail and in an enthusiastic tone. End with a follow up question.")
+#    retriever = db.as_retriever()
+#    qa = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key="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"), chain_type="stuff", retriever=retriever)
+
+#    resp=qa.run("what is this video about? Answer in detail and in an enthusiastic tone. End with a follow up question.")
 '''
 
 import pandas as pd
@@ -128,13 +127,13 @@ def extract_page(link):
     return words, num, website_text
 
 '''
-def extract_YT(link):
-    address=link
-    loader = YoutubeLoader.from_youtube_url(address, add_video_info=True)
-    text=str(loader.load()[0])
-    words=len(text.split())
-    num=1
-    return words, num, text
+#def extract_YT(link):
+#    address=link
+#    loader = YoutubeLoader.from_youtube_url(address, add_video_info=True)
+#    text=str(loader.load()[0])
+#    words=len(text.split())
+#    num=1
+#    return words, num, text
 '''
 #### Clear data upon new input
 
