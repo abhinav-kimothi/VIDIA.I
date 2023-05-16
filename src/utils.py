@@ -7,7 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 from configparser import ConfigParser
 import os
-import langchain
+#import langchain
 '''
 from langchain.document_loaders import YoutubeLoader
 from langchain.document_loaders import TextLoader
