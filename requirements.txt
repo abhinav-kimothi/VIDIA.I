@@ -8,7 +8,7 @@ requests==2.30.0
 bs4==0.0.1
 pandas==2.0.1
 tiktoken==0.4.0
-langchain==0.0.170
+langchain
 youtube-transcript-api==0.6.0
 pytube==15.0.0
 faiss-cpu==1.7.4
