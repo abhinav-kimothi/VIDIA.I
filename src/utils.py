@@ -356,7 +356,7 @@ def first_column():
             st.markdown("<span style='color:#5A5A5A;'>🖖 I am built on [Streamlit](https://streamlit.io/) using large language models built by good fellows at [OpenAI](https://openai.com). A huge shout-out to [Stremlit Chat](https://github.com/AI-Yash/st-chat) and [pdfplumber](https://github.com/jsvine/pdfplumber).</span>", unsafe_allow_html=True)
             st.write(" ")
             st.write(" ")
-            st.markdown("<p style='color:#5A5A5A;'>🖖 Presently, Documents(.pdf and .txt) and web ulrs(single page) are enabled. Websites, Videos and Audios are next in pipeline.</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#5A5A5A;'>🖖 Presently, Documents(.pdf and .txt), web ulrs(single page) and YouTube links are enabled. Websites and Audios are next in pipeline.</p>", unsafe_allow_html=True)
             st.write(" ")        
             st.write(" ")        
             st.markdown("<span style='color:#5A5A5A;'>🖖 I am under regular development. You can also view my source code and contribute [here](https://github.com/abhinav-kimothi/VIDIA.I/tree/main).</span>", unsafe_allow_html=True)
@@ -374,7 +374,7 @@ def second_column():
 
 def third_column():
             st.markdown("<p style='text-align:center;color:blue;'><u><b>Roadmap & Suggestions</b></u></p>",unsafe_allow_html=True)
-            st.markdown("<p style='color:#5A5A5A;'>🎯 Video transcripts🎥, Audio transcripts♬, Spreadsheets and Codes as inputs. Ability to handle multiple inputs, complete websites, content repositories etc.</p>",unsafe_allow_html=True)
+            st.markdown("<p style='color:#5A5A5A;'>🎯 Audio transcripts♬, Spreadsheets and Codes as inputs. Ability to handle multiple inputs, complete websites, content repositories etc.</p>",unsafe_allow_html=True)
             st.write(" ")
             st.markdown("<p style='color:#5A5A5A;'>🎯 Analysis of spreadsheets with charts📊 and insights✍. Analysis of other forms of dataframes/datasets.",unsafe_allow_html=True)
             st.write(" ")

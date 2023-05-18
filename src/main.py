@@ -46,11 +46,32 @@ if check_key():
 #### If input mode has been chosen and link/doc provided, convert the input to text ####
 if uploaded is not None and uploaded !="":
     if input_choice == "Document":
-        words,pages, string_data=extract_data(uploaded)
+        try:
+            words,pages, string_data=extract_data(uploaded)
+            succeed="Success"
+        except:
+            words=0
+            pages=0
+            string_data=''
+            succeed="Failure"
     elif input_choice == "Weblink":
-        words,pages,string_data=extract_page(uploaded)
+        try:
+            words,pages,string_data=extract_page(uploaded)
+            succeed="Success"
+        except:
+            words=0
+            pages=0
+            string_data=''
+            succeed="Failure"
     elif input_choice =="YouTube":
-        words,pages,string_data=extract_YT(uploaded)
+        try:
+            words,pages,string_data=extract_YT(uploaded)
+            succeed="Success"
+        except:
+            succeed="Failure"
+            words=0
+            pages=0
+            string_data="No text found"
 
     #### Count number of words and pages read ####
     col1, col2, col3=st.sidebar.columns(3)
@@ -67,34 +88,37 @@ if uploaded is not None and uploaded !="":
     tab1, tab2, tab3=st.tabs(["|__QnA__ 🔍|","|__Document Summary__ 📜|","|__About VIDIA__ 🎭|"])
 
     with tab1: #### The QnA Tab
-        initialize_chat("👋")  #### Initialize session state variables for the chat ####
+        if succeed=="Failure":
+            st.error("# The input document might be corrupted or the extraction of information from the input link failed. Try uploading a new document or entering a different link")
+        else:
+            initialize_chat("👋")  #### Initialize session state variables for the chat ####
 
-        #### Put user question input on top ####
-        with st.form('input form',clear_on_submit=True):
-            inp=st.text_input("Please enter your question below and hit Submit. Please note that this is not a chat, yet 😉", key="current")
-            submitted = st.form_submit_button("Submit")
+            #### Put user question input on top ####
+            with st.form('input form',clear_on_submit=True):
+                inp=st.text_input("Please enter your question below and hit Submit. Please note that this is not a chat, yet 😉", key="current")
+                submitted = st.form_submit_button("Submit")
 
-        if not submitted: #### This will render the initial state message by VIDIA when no user question has been asked ####
-            with st.container(): #### Define container for the chat
-                render_chat() #### Function renders chat messages based on recorded chat history
-        if submitted:
-            #### This commented code block uses chatgpt model turbo-3.5 ####
-            #### mdict=create_dict_from_session()
-            #### if mdict !=[]:
-            ####     response_text=q_response_chat(inp,info,mdict)
-            ################################################################
+            if not submitted: #### This will render the initial state message by VIDIA when no user question has been asked ####
+                with st.container(): #### Define container for the chat
+                    render_chat() #### Function renders chat messages based on recorded chat history
+            if submitted:
+                #### This commented code block uses chatgpt model turbo-3.5 ####
+                #### mdict=create_dict_from_session()
+                #### if mdict !=[]:
+                ####     response_text=q_response_chat(inp,info,mdict)
+                ################################################################
 
-            with st.spinner("Scanning document for response..."): #### Wait while openai response is awaited ####
-                final_text=q_response(inp,info,models) #### Gets response to user question. In case the question is out of context, gets general response calling out 'out of context' ####
+                with st.spinner("Scanning document for response..."): #### Wait while openai response is awaited ####
+                    final_text=q_response(inp,info,models) #### Gets response to user question. In case the question is out of context, gets general response calling out 'out of context' ####
             
-            #### This section creates columns for two buttons, to clear chat and to download the chat as history ####
-            col1,col2,col3,col4=st.columns(4)
-            col1.button("Clear History",on_click=clear,type='secondary') #### clear function clears all session history for messages #####
-            f=write_history_to_a_file() #### combines the session messages into a string ####
-            col4.download_button("Download History",data=f,file_name='history.txt')
+                #### This section creates columns for two buttons, to clear chat and to download the chat as history ####
+                col1,col2,col3,col4=st.columns(4)
+                col1.button("Clear History",on_click=clear,type='secondary') #### clear function clears all session history for messages #####
+                f=write_history_to_a_file() #### combines the session messages into a string ####
+                col4.download_button("Download History",data=f,file_name='history.txt')
 
-            with st.container():
-                chatbot(inp,final_text) #### adds the latest question and response to the session messages and renders the chat ####
+                with st.container():
+                    chatbot(inp,final_text) #### adds the latest question and response to the session messages and renders the chat ####
 
     with tab2: #### Document Summary Tab ####
         col1, col2, col3=st.columns(3)

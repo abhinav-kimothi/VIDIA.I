@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 
 api.key
+trial.py
+trial2.py
