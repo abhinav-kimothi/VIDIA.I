@@ -7,41 +7,16 @@ import requests
 from bs4 import BeautifulSoup
 from configparser import ConfigParser
 import os
-import langchain
+import tiktoken
 
 from langchain.document_loaders import YoutubeLoader
-#from langchain.document_loaders import TextLoader
+from langchain.document_loaders import TextLoader
 
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
 
-#from langchain.text_splitter import CharacterTextSplitter
-#from langchain.chains import RetrievalQA
-#from langchain.llms import OpenAI
-
-#from langchain.indexes import VectorstoreIndexCreator
-#from langchain.embeddings import OpenAIEmbeddings
-#from langchain.vectorstores import FAISS
-
-
-#def extract_YT(link):
-#    address=link
-#    loader = YoutubeLoader.from_youtube_url(address, add_video_info=True)
-#    return loader.load()
-
-#def query_response(documents):
-
-#    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=5)
-#    texts = text_splitter.split_documents(documents)
-
-#    embeddings = OpenAIEmbeddings()
-#    db = FAISS.from_documents(texts, embeddings)
-
-#    retriever = db.as_retriever()
-#    qa = RetrievalQA.from_chain_type(llm=OpenAI(openai_api_key="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"), chain_type="stuff", retriever=retriever)
-
-#    resp=qa.run("what is this video about? Answer in detail and in an enthusiastic tone. End with a follow up question.")
-
-
-import pandas as pd
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.docstore.document import Document
 #import tiktoken
 ###
 config_object = ConfigParser()
@@ -107,13 +82,19 @@ def extract_data_pdf(feed):
             text+=p.extract_text()
             num+=1
     words=len(text.split())
-    return words, num, text
+    num=0
+
+    tokens=num_tokens_from_string(text,encoding_name="cl100k_base")
+    return words, num, text, tokens
 
 def extract_data_txt(feed):
     text=feed.read().decode("utf-8")
+
     words=len(text.split())
-    num='NA'
-    return words, num, text
+    num=0
+    
+    tokens=num_tokens_from_string(text,encoding_name="cl100k_base")
+    return words, num, text, tokens
 
 def extract_page(link):
     address=link
@@ -123,20 +104,31 @@ def extract_page(link):
     lines = filter(lambda x: x.strip(), text.splitlines())
     website_text = "\n".join(lines)
     words=len(website_text.split())
-    num=1
-    return words, num, website_text
+    num=0
+
+    tokens=num_tokens_from_string(website_text,encoding_name="cl100k_base")
+    return words, num, website_text, tokens
 
 
 def extract_YT(link):
     address=link
     loader = YoutubeLoader.from_youtube_url(address, add_video_info=True)
-    text=str(loader.load()[0])
+    document=loader.load()
+    text=str(document[0].page_content)
     words=len(text.split())
-    num=1
+    num=0
+    tokens=num_tokens_from_string(text,encoding_name="cl100k_base")
+    return words, num, text, tokens
 
-    return words, num, text
 
-#### Clear data upon new input
+def extract_audio(feed):
+    string_data = openai.Audio.transcribe("whisper-1", feed)['text']
+    words=len(string_data.split())
+    num='0'
+    tokens=num_tokens_from_string(string_data,encoding_name="cl100k_base")
+
+    return words,num,string_data, tokens
+
 
 
 
@@ -330,8 +322,7 @@ Layout, Information and Selection Functions
 
 def input_selector():
 
-        input_choice=st.sidebar.radio("#### :blue[Choose the Input Method]",('Document','Weblink','YouTube','Audio (Coming Soon)'))
-
+        input_choice=st.sidebar.radio("#### :blue[Choose the Input Method]",('Document','Weblink','YouTube','Audio'))
         if input_choice=="Document":
             with st.sidebar.expander("📁 __Documents__"):
                 uploaded=st.file_uploader(label="Select File",type=['pdf','txt'],on_change=clear)
@@ -341,9 +332,9 @@ def input_selector():
         elif input_choice=="YouTube":
             with st.sidebar.expander("🎥 __YouTube__"):
                 uploaded=st.text_input('Enter a YT link',on_change=clear)
-        elif input_choice=="Audio (Coming Soon)":
-            with st.sidebar.expander("🎙 __Audio__ (Coming Soon)"):
-                uploaded=st.text_input('Enter an Audio link',on_change=clear,disabled=True)
+        elif input_choice=="Audio":
+            with st.sidebar.expander("🎙 __Audio__"):
+                uploaded=st.file_uploader('Select File',type=['mp3'],on_change=clear)
         
         return input_choice, uploaded
 
@@ -356,7 +347,7 @@ def first_column():
             st.markdown("<span style='color:#5A5A5A;'>🖖 I am built on [Streamlit](https://streamlit.io/) using large language models built by good fellows at [OpenAI](https://openai.com). A huge shout-out to [Stremlit Chat](https://github.com/AI-Yash/st-chat) and [pdfplumber](https://github.com/jsvine/pdfplumber).</span>", unsafe_allow_html=True)
             st.write(" ")
             st.write(" ")
-            st.markdown("<p style='color:#5A5A5A;'>🖖 Presently, Documents(.pdf and .txt), web ulrs(single page) and YouTube links are enabled. Websites and Audios are next in pipeline.</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#5A5A5A;'>🖖 Presently, Documents(.pdf and .txt), web ulrs(single page), YouTube links and Audio files are enabled. Websites and Spreadsheets are next in pipeline.</p>", unsafe_allow_html=True)
             st.write(" ")        
             st.write(" ")        
             st.markdown("<span style='color:#5A5A5A;'>🖖 I am under regular development. You can also view my source code and contribute [here](https://github.com/abhinav-kimothi/VIDIA.I/tree/main).</span>", unsafe_allow_html=True)
@@ -374,7 +365,7 @@ def second_column():
 
 def third_column():
             st.markdown("<p style='text-align:center;color:blue;'><u><b>Roadmap & Suggestions</b></u></p>",unsafe_allow_html=True)
-            st.markdown("<p style='color:#5A5A5A;'>🎯 Audio transcripts♬, Spreadsheets and Codes as inputs. Ability to handle multiple inputs, complete websites, content repositories etc.</p>",unsafe_allow_html=True)
+            st.markdown("<p style='color:#5A5A5A;'>🎯 Spreadsheets and Codes as inputs. Ability to handle multiple inputs, complete websites, content repositories etc.</p>",unsafe_allow_html=True)
             st.write(" ")
             st.markdown("<p style='color:#5A5A5A;'>🎯 Analysis of spreadsheets with charts📊 and insights✍. Analysis of other forms of dataframes/datasets.",unsafe_allow_html=True)
             st.write(" ")
@@ -399,6 +390,25 @@ def contact():
     st.markdown("Twitter : [@abhinav-kimothi](https://twitter.com/abhinav_kimothi)")
     st.markdown("Email : [abhinav.kimothi.ds@gmail.com](mailto:abhinav.kimothi.ds@gmail.com)")
 
+
+#####Embeddings and Semantic Similarity#########
+@st.cache_data
+def create_embeddings(text):
+    with open('temp.txt','w') as f:
+         f.write(text)
+         f.close()
+    loader=TextLoader('temp.txt')
+    document=loader.load()
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=2000)
+    docs = text_splitter.split_documents(document)
+    num_emb=len(docs)
+    embeddings = OpenAIEmbeddings()
+    db = FAISS.from_documents(docs, embeddings)
+    return db, num_emb
+
+def search_context(db,query):
+     defin=db.similarity_search(query)
+     return defin[0].page_content
 
 '''
 Other Utilities
@@ -433,6 +443,56 @@ def write_history_to_a_file():
     
     return hst
 
+def check_upload(uploaded,input_choice):
+        if input_choice == "Document":
+            try:
+                words,pages, string_data,token=extract_data(uploaded)
+                succeed="Success"
+            except:
+                words=0
+                pages=0
+                string_data=''
+                succeed="Failure"
+            
+                token=0
+        elif input_choice == "Weblink":
+            try:
+                words,pages,string_data,token=extract_page(uploaded)
+                succeed="Success"
+            except:
+                words=0
+                pages=0
+                string_data=''
+                succeed="Failure"
+                
+                token=0
+        elif input_choice =="YouTube":
+            try:
+                words,pages,string_data,token=extract_YT(uploaded)
+                succeed="Success"
+            except:
+                succeed="Failure"
+                words=0
+                pages=0
+                string_data=''
+                
+                token=0
+        elif input_choice=="Audio":
+            try:
+                  words,pages,string_data,token=extract_audio(uploaded)
+                  succeed="Success"
+            except:
+                 succeed="Failure"
+                 words=0
+                 pages=0
+                 string_data=''
+                 
+                 token=0
+        return words, pages, string_data, succeed,token
 
 
-
+def num_tokens_from_string(string: str, encoding_name: str) -> int:
+    """Returns the number of tokens in a text string."""
+    encoding = tiktoken.get_encoding(encoding_name)
+    num_tokens = len(encoding.encode(string))
+    return num_tokens

@@ -45,51 +45,30 @@ if check_key():
 
 #### If input mode has been chosen and link/doc provided, convert the input to text ####
 if uploaded is not None and uploaded !="":
-    if input_choice == "Document":
-        try:
-            words,pages, string_data=extract_data(uploaded)
-            succeed="Success"
-        except:
-            words=0
-            pages=0
-            string_data=''
-            succeed="Failure"
-    elif input_choice == "Weblink":
-        try:
-            words,pages,string_data=extract_page(uploaded)
-            succeed="Success"
-        except:
-            words=0
-            pages=0
-            string_data=''
-            succeed="Failure"
-    elif input_choice =="YouTube":
-        try:
-            words,pages,string_data=extract_YT(uploaded)
-            succeed="Success"
-        except:
-            succeed="Failure"
-            words=0
-            pages=0
-            string_data="No text found"
+    words, pages, string_data,succeed,token=check_upload(uploaded=uploaded,input_choice=input_choice)
+    #db=create_embeddings(string_data)
+        #### Count number of words and pages read ####
+    if token>2500:
 
-    #### Count number of words and pages read ####
+        db,pages=create_embeddings(string_data)
+
     col1, col2, col3=st.sidebar.columns(3)
-    col1.markdown("###### :violet[Pages Read:] :blue["+str(pages)+"]")
-    col2.write("  ")
-    col3.markdown("###### :violet[Words Read:] :blue["+str(words)+"]")
+    col1.markdown("###### :violet[Tokens Read:] :blue["+str(token)+"]")
+    col2.write("###### :violet[Words Read:] :blue["+str(words)+"]")
+    col3.markdown("###### :violet[Embeddings Created:] :blue["+str(pages)+"]")
+
 
 
     #### If large document, cut down since GPT takes only 4000 tokens as input ####
     #### This will be addressed when indexing is introduced                    ####
-    info = (string_data[:3000]) if len(string_data) > 3000 else string_data
+
 
     #### Splitting page into tabs ####
     tab1, tab2, tab3=st.tabs(["|__QnA__ 🔍|","|__Document Summary__ 📜|","|__About VIDIA__ 🎭|"])
 
     with tab1: #### The QnA Tab
         if succeed=="Failure":
-            st.error("# The input document might be corrupted or the extraction of information from the input link failed. Try uploading a new document or entering a different link")
+            st.error("#### The input document might be corrupted or the extraction of information from the input link failed. Try uploading a new document or entering a different link")
         else:
             initialize_chat("👋")  #### Initialize session state variables for the chat ####
 
@@ -107,21 +86,32 @@ if uploaded is not None and uploaded !="":
                 #### if mdict !=[]:
                 ####     response_text=q_response_chat(inp,info,mdict)
                 ################################################################
-
-                with st.spinner("Scanning document for response..."): #### Wait while openai response is awaited ####
-                    final_text=q_response(inp,info,models) #### Gets response to user question. In case the question is out of context, gets general response calling out 'out of context' ####
-            
-                #### This section creates columns for two buttons, to clear chat and to download the chat as history ####
+                if token>2500:
+                    with st.spinner("Finding most relevant section of the document..."):
+                        info=search_context(db,inp)
+                    with st.spinner("Preparing response..."):
+                        final_text=q_response(inp,info,models)
+                else:
+                    info=string_data
+                    with st.spinner("Scanning document for response..."): #### Wait while openai response is awaited ####
+                        final_text=q_response(inp,info,models) #### Gets response to user question. In case the question is out of context, gets general response calling out 'out of context' ####
+                
+                    #### This section creates columns for two buttons, to clear chat and to download the chat as history ####
                 col1,col2,col3,col4=st.columns(4)
                 col1.button("Clear History",on_click=clear,type='secondary') #### clear function clears all session history for messages #####
                 f=write_history_to_a_file() #### combines the session messages into a string ####
                 col4.download_button("Download History",data=f,file_name='history.txt')
 
                 with st.container():
-                    chatbot(inp,final_text) #### adds the latest question and response to the session messages and renders the chat ####
+                        chatbot(inp,final_text) #### adds the latest question and response to the session messages and renders the chat ####
 
     with tab2: #### Document Summary Tab ####
         col1, col2, col3=st.columns(3)
+        if token>2500:
+            with st.spinner("Finding most relevant section of the document..."):
+                    info=search_context(db,"What is this about?")
+        else:
+            info=string_data
         if st.button("Document Summary"):
 
                     st.markdown("#### Summary")

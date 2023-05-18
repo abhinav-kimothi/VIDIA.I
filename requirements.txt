@@ -14,6 +14,9 @@ bs4==0.0.1
 pandas==2.0.1
 torch 
 torchvision
+unstructured
+pdf2image
+pytesseract
 
 
 
