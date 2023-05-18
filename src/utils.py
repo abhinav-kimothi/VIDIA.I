@@ -198,6 +198,7 @@ def input_key():
             submit = st.form_submit_button("Enter")
     if submit:
         openai.api_key=api_key
+        os.environ["OPENAI_API_KEY"]=api_key
 
         temp=check_key()
 
