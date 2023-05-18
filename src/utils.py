@@ -16,7 +16,9 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.docstore.document import Document
+from langchain.document_loaders.image import UnstructuredImageLoader
+from PIL import Image
+
 #import tiktoken
 ###
 config_object = ConfigParser()
@@ -129,7 +131,21 @@ def extract_audio(feed):
 
     return words,num,string_data, tokens
 
+def extract_image(feed):
+    
+    loader = UnstructuredImageLoader(feed)
+    
+    document=loader.load()
 
+    text=str(document[0].page_content)
+
+    words=len(text.split())
+
+    num=0
+    tokens=num_tokens_from_string(text,encoding_name="cl100k_base")
+
+    
+    return words, num, text, tokens
 
 
 
@@ -165,11 +181,19 @@ Functions for API Key Input
 def check_key():
 
     if openai.api_key:
-        st.sidebar.info("OpenAI API key detected")
+        #st.sidebar.info("OpenAI API key detected")
         return True
-    elif os.path.exists(".env") and os.environ.get("OPENAI_API_KEY") is not None:
+    elif os.path.exists(".venv") and os.environ.get("OPENAI_API_KEY") is not None:
         openai.api_key=os.environ["OPENAI_API_KEY"]
-        st.sidebar.success("OpenAI API key loaded from .env", icon="🚀")
+        if validate_key():
+            st.sidebar.success("OpenAI API key loaded from .env", icon="🚀")
+        else:
+            del os.environ['OPENAI_API_KEY']
+            openai.api_key=None
+            #st.write(openai.api_key)
+
+            
+            check_key()
         return True
     else:
         input_key()
@@ -181,7 +205,7 @@ def check_key():
 def validate_key():
     try:
         r=openai.Completion.create(model=models, prompt="t.",max_tokens=5)
-        st.sidebar.success("API key validated")
+        #st.sidebar.success("API key validated")
         return True
     except:
         st.sidebar.error("API key invalid, please change the key")
@@ -323,19 +347,26 @@ Layout, Information and Selection Functions
 
 def input_selector():
 
-        input_choice=st.sidebar.radio("#### :blue[Choose the Input Method]",('Document','Weblink','YouTube','Audio'))
+        input_choice=st.sidebar.radio("#### :blue[Choose the Input Method]",('Document','Weblink','YouTube','Audio','Image'))
         if input_choice=="Document":
-            with st.sidebar.expander("📁 __Documents__"):
+            with st.sidebar.expander("📁 __Documents__",expanded=True):
                 uploaded=st.file_uploader(label="Select File",type=['pdf','txt'],on_change=clear)
         elif input_choice=="Weblink":
-            with st.sidebar.expander("🌐 __Webpage__"):
+            with st.sidebar.expander("🌐 __Webpage__",expanded=True):
                 uploaded=st.text_input('Enter a weblink',on_change=clear)
         elif input_choice=="YouTube":
-            with st.sidebar.expander("🎥 __YouTube__"):
+            with st.sidebar.expander("🎥 __YouTube__",expanded=True):
                 uploaded=st.text_input('Enter a YT link',on_change=clear)
         elif input_choice=="Audio":
-            with st.sidebar.expander("🎙 __Audio__"):
-                uploaded=st.file_uploader('Select File',type=['mp3'],on_change=clear)
+            with st.sidebar.expander("🎙 __Audio__",expanded=True):
+                uploaded=st.file_uploader('Select File',type=['mp3', 'mp4', 'mpeg', 'mpga', 'm4a', 'wav'],on_change=clear)
+        elif input_choice=="Image":
+            with st.sidebar.expander("🎙 __Text from Image__",expanded=True):
+                uploaded=st.file_uploader('Select File',type=['jpg','jpeg','png'],on_change=clear)
+                if uploaded:
+                    image=Image.open(uploaded)
+                    loc='./Assets/'+str(uploaded.name)
+                    image.save(loc)
         
         return input_choice, uploaded
 
@@ -381,7 +412,7 @@ def third_column():
 def heads():
     st.markdown("<h3 style='text-align:center;'>👋🏽 Welcome! I am <span style='color:#4B91F1'>VIDIA.I</span>!👩🏽‍💻</h3>",unsafe_allow_html=True)
     st.markdown("""
-    <p style='text-align:center;'>I answer questions after reading documents, webpages<span style='color:#D3D3D3; text-align:center;'>, spreadsheets^, youtube videos^ and audio files^ (^coming soon)</span></p>
+    <p style='text-align:center;'>I answer questions after reading documents, webpages, images with text, YouTube videos, audio files<span style='color:#D3D3D3; text-align:center;'> and spreadsheets(coming soon)</span></p>
     """,unsafe_allow_html=True)
     st.markdown("<h6 style='text-align:center;'> 💕 You can ask me anything 💕</h6>",unsafe_allow_html=True)
 
@@ -425,6 +456,7 @@ def clear(greeting=greeting):
         del st.session_state['pastinp']
     if 'pastresp' in st.session_state:
         del st.session_state['pastresp']
+
     initialize_chat(greeting)
 
 ### This function for writing chat history into a string variable called hst
@@ -443,7 +475,7 @@ def write_history_to_a_file():
         hst+="\n"+str(item)
     
     return hst
-
+@st.cache_data
 def check_upload(uploaded,input_choice):
         if input_choice == "Document":
             try:
@@ -489,6 +521,23 @@ def check_upload(uploaded,input_choice):
                  string_data=''
                  
                  token=0
+        elif input_choice=="Image":
+            try:
+                
+                loc='./Assets/'+str(uploaded.name)
+                words,pages,string_data,token=extract_image(loc)
+                succeed="Success"
+               
+                os.remove(loc)
+            except:
+                
+                succeed="Failure"
+                words=0
+                pages=0
+                string_data=''
+                 
+                token=0
+
         return words, pages, string_data, succeed,token
 
 

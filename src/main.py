@@ -2,7 +2,7 @@ import streamlit as st
 from configparser import ConfigParser
 from PIL import Image
 import openai
-
+import os
 from utils import *
 
 
@@ -45,7 +45,8 @@ if check_key():
 
 #### If input mode has been chosen and link/doc provided, convert the input to text ####
 if uploaded is not None and uploaded !="":
-    words, pages, string_data,succeed,token=check_upload(uploaded=uploaded,input_choice=input_choice)
+    with st.spinner("#### Parsing data"):
+        words, pages, string_data,succeed,token=check_upload(uploaded=uploaded,input_choice=input_choice)
     #db=create_embeddings(string_data)
         #### Count number of words and pages read ####
     if token>2500:
@@ -167,6 +168,7 @@ st.sidebar.image(hline)
 #### Reset Button ####
 if st.sidebar.button("🆘 Reset Application",key="Duo",use_container_width=True):
     openai.api_key=None
+    del os.environ["OPENAI_API_KEY"]
     st.experimental_rerun()
 st.sidebar.image(hline)
  
