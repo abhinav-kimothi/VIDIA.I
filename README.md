@@ -7,7 +7,7 @@
 ---
 
 ## Features
-__Document and Web Page Analysis__:Users can upload documents or provide web links to analyze and extract information from them.
+__Document and Web Page Analysis__:Users can upload files or provide web links to analyze and extract information from them.
 
 __Question-Answering__: Users can ask questions based on the analyzed document or web page, and VIDIA.I utilizes AI models to provide relevant answers.
 
@@ -78,7 +78,7 @@ streamlit run src/main.py
 
 While VIDIA remains a modest side project, I harbor grand ambitions for its future development. 
 
-- I am actively working towards expanding its capabilities to handle video and audio transcripts, spreadsheets, and even complete websites. 
+- I am actively working towards expanding its capabilities to handle spreadsheets, and even complete websites. 
 
 - I aim to enhance VIDIA with advanced features, such as analyzing spreadsheets with charts, handling multiple inputs, and addressing larger documents using embeddings. 
 
