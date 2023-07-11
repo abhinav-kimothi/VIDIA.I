@@ -34,7 +34,7 @@ def input_selector():
                 uploaded=st.file_uploader('Select File',type=['mp3', 'mp4', 'mpeg', 'mpga', 'm4a', 'wav'],on_change=clear)
         elif input_choice=="Image":
             with st.sidebar.expander("🎙 __Text from Image__",expanded=True):
-                uploaded=st.file_uploader('Select File',type=['jpg','jpeg','png'],on_change=clear)
+                uploaded=st.file_uploader('Select File',type=['jpg','jpeg','png'],on_change=clear, disabled=True)
                 if uploaded:
                     image=Image.open(uploaded)
                     loc='./Assets/'+str(uploaded.name)
